@@ -1,4 +1,7 @@
 (function () {
+    // Intercept XMLHttpRequest
+
+    // Intercept fetch API
     const originalFetch = window.fetch;
     window.fetch = async function (...args) {
         console.log('Fetch Intercepted! Request:', args);
@@ -12,8 +15,9 @@
                 console.log('Fetch JSON Response:', jsonResponse);
 
                 // Lưu hoặc xử lý file JSON nếu cần
-                // downloadJson(jsonResponse);
+                console.log(jsonResponse);
                 xulydata(jsonResponse);
+                downloadJson(jsonResponse);
             } catch (error) {
                 console.error('Response is not valid JSON', error);
             }
@@ -22,16 +26,19 @@
 
         return originalFetch(...args); // Tiếp tục với các yêu cầu không phải là URL mong muốn
     };
+
+    // Hàm tải xuống file JSON
+    // function downloadJson(jsonData) {
+    //     const blob = new Blob([JSON.stringify(jsonData)], { type: 'application/json' });
+    //     const url = URL.createObjectURL(blob);
+    //     const a = document.createElement('a');
+    //     a.href = url;
+    //     a.download = 'data.json';  // Tên file JSON khi tải về
+    //     a.click();
+    //     URL.revokeObjectURL(url); // Giải phóng URL tạm thời
+    // }
 })();
 
-function texttoDate(text){
-    const regex = /(\d{2})\/(\d{2})\/(\d{4})/g;
-    const arrr = text.match(regex);
-    console.log(arrr);
-    const startDate = new Date(arrr[0].replace(/(\d{2})\/(\d{2})\/(\d{4})/, '$3-$2-$1'));
-    const endDate = new Date(arrr[1].replace(/(\d{2})\/(\d{2})\/(\d{4})/, '$3-$2-$1'));
-    console.log(startDate.toISOString(), endDate.toISOString());
-}
 
 function EventICS(json){
     console.log(json);
