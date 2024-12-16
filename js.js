@@ -126,3 +126,6 @@ function downloadICS(content) {
     // Giải phóng URL khi tải xong
     URL.revokeObjectURL(url);
 }
+
+console.log("run");
+
