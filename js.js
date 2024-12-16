@@ -119,7 +119,3 @@ function downloadICS(content) {
     // Giải phóng URL khi tải xong
     URL.revokeObjectURL(url);
 }
-
-
-window.location.href = "https://thongtindaotao.sgu.edu.vn/public/#/tkb-hocky";
-window.location.reload();
