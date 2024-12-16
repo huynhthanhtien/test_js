@@ -1,47 +1,46 @@
 (function () {
     // Intercept XMLHttpRequest
+    const open = XMLHttpRequest.prototype.open;
 
-    // Intercept fetch API
-    const originalFetch = window.fetch;
-    window.fetch = async function (...args) {
-        console.log('Fetch Intercepted! Request:', args);
+    XMLHttpRequest.prototype.open = function (method, url) {
+        // console.log(`2 Request Intercepted! Method: ${method}, URL: ${url}`);
 
         // Kiểm tra URL có phải là URL mong muốn không
-        if (args[0] === '/public/api/sch/w-locdstkbhockytheodoituong') {
-            const response = await originalFetch(...args);
-            const clone = response.clone(); // Clone để đọc dữ liệu
-            try {
-                const jsonResponse = await clone.json();
-                console.log('Fetch JSON Response:', jsonResponse);
+        // console.log(url);
+        if (url === '/public/api/sch/w-locdstkbhockytheodoituong') {
+            this.addEventListener('load', function () {
+                try {
+                    // Kiểm tra xem phản hồi có phải là JSON không
+                    const jsonResponse = JSON.parse(this.responseText);
+                    // console.log('JSON Response:', jsonResponse);
 
-                // Lưu hoặc xử lý file JSON nếu cần
-                console.log(jsonResponse);
-                xulydata(jsonResponse);
-                downloadJson(jsonResponse);
-            } catch (error) {
-                console.error('Response is not valid JSON', error);
-            }
-            return response;
+                    // Lưu hoặc xử lý file JSON nếu cần
+                    xulydata(jsonResponse);
+                    // downloadJson(jsonResponse);
+                } catch (error) {
+                    console.error('Response is not valid JSON', error);
+                }
+            });
         }
-
-        return originalFetch(...args); // Tiếp tục với các yêu cầu không phải là URL mong muốn
+        
+        open.apply(this, arguments);
     };
 
     // Hàm tải xuống file JSON
-    // function downloadJson(jsonData) {
-    //     const blob = new Blob([JSON.stringify(jsonData)], { type: 'application/json' });
-    //     const url = URL.createObjectURL(blob);
-    //     const a = document.createElement('a');
-    //     a.href = url;
-    //     a.download = 'data.json';  // Tên file JSON khi tải về
-    //     a.click();
-    //     URL.revokeObjectURL(url); // Giải phóng URL tạm thời
-    // }
+    function downloadJson(jsonData) {
+        const blob = new Blob([JSON.stringify(jsonData)], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'data.json';  // Tên file JSON khi tải về
+        a.click();
+        URL.revokeObjectURL(url); // Giải phóng URL tạm thời
+    }
 })();
 
 
 function EventICS(json){
-    console.log(json);
+    // console.log(json);
     const ma_mon = json.ma_mon;
     const title = json.ten_mon;
     const location = json.phong;
@@ -53,10 +52,10 @@ function EventICS(json){
 
     const regex = /(\d{2})\/(\d{2})\/(\d{4})/g;
     const arrr = date.match(regex);
-    // console.log(arrr);
+    // // console.log(arrr);
     const startDate = new Date(arrr[0].replace(/(\d{2})\/(\d{2})\/(\d{4})/, '$3-$2-$1'));
     const endDate = new Date(arrr[1].replace(/(\d{2})\/(\d{2})\/(\d{4})/, '$3-$2-$1'));
-    // console.log(startDate.toString(), endDate.toISOString());
+    // // console.log(startDate.toString(), endDate.toISOString());
     let kq ;
     let newdate;
 
@@ -68,7 +67,7 @@ function EventICS(json){
         const tkbEnd = new Date(newdate);
         tkbEnd.setHours(timeEnd.split(':')[0], timeEnd.split(':')[1]);
 
-        console.log(tkbStart.toString(), tkbEnd.toString());
+        // console.log(tkbStart.toString(), tkbEnd.toString());
         
         kq +=
             `BEGIN:VEVENT
@@ -104,12 +103,13 @@ function xulydata(jsonData){
       icsContent += `
     END:VCALENDAR`;
 
-    // console.log(icsContent);
+    // // console.log(icsContent);
     downloadICS(icsContent);
 }
 
 function downloadICS(content) {
     // Tạo Blob từ chuỗi ICS content
+    // // console.log("downloadICS");   
     const blob = new Blob([content], { type: 'text/calendar' });
 
     // Tạo URL cho Blob
