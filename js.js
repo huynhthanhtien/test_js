@@ -73,7 +73,7 @@ function EventICS(json){
             `BEGIN:VEVENT
             SUMMARY:${title}
             LOCATION:${location}
-            DESCRIPTION:Mã môn học: ${ma_mon}\nNhóm tổ: ${nhom_to}\nGiáo viên: ${gv}
+            DESCRIPTION:Mã môn học: ${ma_mon}\\nNhóm tổ: ${nhom_to}\\nGiáo viên: ${gv}
             DTSTART${tkbStart.toISOString().replace(/[-:]|(.000)/g, '')}
             DTEND${tkbEnd.toISOString().replace(/[-:]|(.000)/g, '')}
             BEGIN:VALARM
@@ -126,4 +126,6 @@ function downloadICS(content) {
     // Giải phóng URL khi tải xong
     URL.revokeObjectURL(url);
 }
+
+console.log("run");
 
