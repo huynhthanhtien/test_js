@@ -57,9 +57,10 @@ function EventICS(json){
     const endDate = new Date(arrr[1].replace(/(\d{2})\/(\d{2})\/(\d{4})/, '$3-$2-$1'));
     // // console.log(startDate.toString(), endDate.toISOString());
     let kq = "";
-    let newdate;
 
-    for(newdate = startDate; newdate <= endDate; newdate.setDate(newdate.getDate() + 7)){
+    let newdate = startDate;
+
+    // for(newdate = startDate; newdate <= endDate; newdate.setDate(newdate.getDate() + 7)){
 
         const tkbStart = new Date(newdate);
         tkbStart.setHours(timeStart.split(':')[0], timeStart.split(':')[1]);
@@ -67,6 +68,7 @@ function EventICS(json){
         const tkbEnd = new Date(newdate);
         tkbEnd.setHours(timeEnd.split(':')[0], timeEnd.split(':')[1]);
 
+        endDate.setHours(23, 59);
         // console.log(tkbStart.toString(), tkbEnd.toString());
         
         kq += `BEGIN:VEVENT\n`;
@@ -75,6 +77,7 @@ function EventICS(json){
         kq += `DESCRIPTION:Mã môn học: ${ma_mon}\\nNhóm tổ: ${nhom_to}\\nGiáo viên: ${gv}\n`;
         kq += `DTSTART:${tkbStart.toISOString().replace(/[-:]|(.000)/g, '')}\n`;
         kq += `DTEND:${tkbEnd.toISOString().replace(/[-:]|(.000)/g, '')}\n`;
+        kq += `RRULE:FREQ=WEEKLY;INTERVAL=1;UNTIL=${endDate.toISOString().replace(/[-:]|(.000)/g, '')}\n`;
         kq += `BEGIN:VALARM\n`;
         kq += `TRIGGER:-PT30M\n`;
         kq += `DESCRIPTION:${title}\n`;
@@ -82,7 +85,7 @@ function EventICS(json){
         kq += `END:VALARM\n`;
         kq += `END:VEVENT\n`;
         
-    }
+    // }
     return kq;
 }
 
@@ -95,7 +98,7 @@ function xulydata(jsonData){
 
     icsContent += `BEGIN:VCALENDAR\n`;
     icsContent += `VERSION:2.0\n`;
-    icsContent += `PRODID:-//test//code//EN\n`;
+    icsContent += `PRODID: test_js\n`;
     
     events.forEach(event => {
         icsContent += EventICS(event);
