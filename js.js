@@ -40,12 +40,28 @@
 
 
 function EventICS(json){
+
+    const arr_start_time = [
+        "00:00",
+        "7:00", "7:50", "9:00", "9:50", "10:40",  // Ca 1
+        "13:00", "13:50", "15:00", "15:50", "16:40",  // Ca 2
+        "17:40", "18:30", "19:20"  // Ca 3
+    ];
+    const arr_end_time = [
+        "00:00",
+        "7:50", "8:40", "9:50", "10:40", "11:30",  // Ca 1
+        "13:50", "14:40", "15:50", "16:40", "17:30",  // Ca 2
+        "18:30", "19:20", "20:10"  // Ca 3
+    ];
     // console.log(json);
     const ma_mon = json.ma_mon;
     const title = json.ten_mon;
     const location = json.phong;
-    const timeStart = json.tu_gio;
-    const timeEnd = json.den_gio;
+    // const timeStart = json.tu_gio;
+    // const timeEnd = json.den_gio;
+    const tbd = json.tbd;
+    const tkt = parseInt(json.tdb) + parent(json.so_tiet) - 1;
+    // const sotiet = json.so_tiet;
     const nhom_to = json.nhom_to;
     const date = json.tooltip;
     const gv = json.gv;
@@ -63,10 +79,10 @@ function EventICS(json){
     // for(newdate = startDate; newdate <= endDate; newdate.setDate(newdate.getDate() + 7)){
 
         const tkbStart = new Date(newdate);
-        tkbStart.setHours(timeStart.split(':')[0], timeStart.split(':')[1]);
+        tkbStart.setHours(arr_start_time[tbd].split(':')[0], arr_start_time[tdb].split(':')[1]);
         
         const tkbEnd = new Date(newdate);
-        tkbEnd.setHours(timeEnd.split(':')[0], timeEnd.split(':')[1]);
+        tkbEnd.setHours(arr_end_time[tkt].split(':')[0], arr_end_time[tkt].split(':')[1]);
 
         endDate.setHours(23, 59);
         // console.log(tkbStart.toString(), tkbEnd.toString());
