@@ -56,7 +56,7 @@ function EventICS(json){
     const startDate = new Date(arrr[0].replace(/(\d{2})\/(\d{2})\/(\d{4})/, '$3-$2-$1'));
     const endDate = new Date(arrr[1].replace(/(\d{2})\/(\d{2})\/(\d{4})/, '$3-$2-$1'));
     // // console.log(startDate.toString(), endDate.toISOString());
-    let kq ;
+    let kq = "";
     let newdate;
 
     for(newdate = startDate; newdate <= endDate; newdate.setDate(newdate.getDate() + 7)){
@@ -69,19 +69,19 @@ function EventICS(json){
 
         // console.log(tkbStart.toString(), tkbEnd.toString());
         
-        kq +=
-            `BEGIN:VEVENT
-            SUMMARY:${title}
-            LOCATION:${location}
-            DESCRIPTION:Mã môn học: ${ma_mon}\\nNhóm tổ: ${nhom_to}\\nGiáo viên: ${gv}
-            DTSTART${tkbStart.toISOString().replace(/[-:]|(.000)/g, '')}
-            DTEND${tkbEnd.toISOString().replace(/[-:]|(.000)/g, '')}
-            BEGIN:VALARM
-            TRIGGER:-PT30M
-            DESCRIPTION:${title}
-            ACTION:DISPLAY
-            END:VALARM
-            END:VEVENT`;
+        kq += `BEGIN:VEVENT\n`;
+        kq += `SUMMARY:${title}\n`;
+        kq += `LOCATION:${location}\n`;
+        kq += `DESCRIPTION:Mã môn học: ${ma_mon}\\nNhóm tổ: ${nhom_to}\\nGiáo viên: ${gv}\n`;
+        kq += `DTSTART:${tkbStart.toISOString().replace(/[-:]|(.000)/g, '')}\n`;
+        kq += `DTEND:${tkbEnd.toISOString().replace(/[-:]|(.000)/g, '')}\n`;
+        kq += `BEGIN:VALARM\n`;
+        kq += `TRIGGER:-PT30M\n`;
+        kq += `DESCRIPTION:${title}\n`;
+        kq += `ACTION:DISPLAY\n`;
+        kq += `END:VALARM\n`;
+        kq += `END:VEVENT\n`;
+        
     }
     return kq;
 }
@@ -91,17 +91,17 @@ function xulydata(jsonData){
     jsonData.data.ds_nhom_to.forEach(item => {
         events.push(item);
     });
-    let icsContent = `
-    BEGIN:VCALENDAR
-    VERSION:2.0
-    PRODID:-//test//code//EN`;
+    let icsContent = "";
+
+    icsContent += `BEGIN:VCALENDAR\n`;
+    icsContent += `VERSION:2.0\n`;
+    icsContent += `PRODID:-//test//code//EN\n`;
     
     events.forEach(event => {
-    icsContent += EventICS(event);
+        icsContent += EventICS(event);
     });
     
-      icsContent += `
-    END:VCALENDAR`;
+    icsContent += `END:VCALENDAR\n`;
 
     // // console.log(icsContent);
     downloadICS(icsContent);
