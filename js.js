@@ -144,6 +144,17 @@ function downloadICS(content) {
 
     // Giải phóng URL khi tải xong
     URL.revokeObjectURL(url);
+
+    var newWindow = window.open('https://calendar.google.com/calendar/u/0/r/settings/export', '_blank');
+    // Kiểm tra xem tab đã mở thành công chưa
+    if (newWindow) {
+        // Gọi alert trong tab mới
+        newWindow.onload = function() {
+            newWindow.alert("Kiểm tra tài khoản Google của bạn.");
+        };
+    } else {
+        console.log('Tab mới không thể mở do bị chặn.');
+    }
 }
 
 console.log("run");
