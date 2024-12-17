@@ -22,7 +22,7 @@
                 }
             });
         }
-        
+
         open.apply(this, arguments);
     };
 
@@ -39,17 +39,17 @@
 })();
 
 
-function EventICS(json){
+function EventICS(json) {
 
     const arr_start_time = [
         "00:00",
-        "7:00", "7:50", "9:00", "9:50", "10:40",  // Ca 1
+        "07:00", "07:50", "09:00", "09:50", "10:40",  // Ca 1
         "13:00", "13:50", "15:00", "15:50", "16:40",  // Ca 2
         "17:40", "18:30", "19:20"  // Ca 3
     ];
     const arr_end_time = [
         "00:00",
-        "7:50", "8:40", "9:50", "10:40", "11:30",  // Ca 1
+        "07:50", "08:40", "09:50", "10:40", "11:30",  // Ca 1
         "13:50", "14:40", "15:50", "16:40", "17:30",  // Ca 2
         "18:30", "19:20", "20:10"  // Ca 3
     ];
@@ -59,8 +59,8 @@ function EventICS(json){
     const location = json.phong;
     // const timeStart = json.tu_gio;
     // const timeEnd = json.den_gio;
-    const tbd = json.tbd;
-    const tkt = parseInt(json.tdb) + parseInt(json.so_tiet) - 1;
+    const tbd = parseInt(json.tbd);
+    const tkt = parseInt(json.tbd) + parseInt(json.so_tiet) - 1;
     // const sotiet = json.so_tiet;
     const nhom_to = json.nhom_to;
     const date = json.tooltip;
@@ -71,41 +71,37 @@ function EventICS(json){
     // // console.log(arrr);
     const startDate = new Date(arrr[0].replace(/(\d{2})\/(\d{2})\/(\d{4})/, '$3-$2-$1'));
     const endDate = new Date(arrr[1].replace(/(\d{2})\/(\d{2})\/(\d{4})/, '$3-$2-$1'));
-    // // console.log(startDate.toString(), endDate.toISOString());
+
     let kq = "";
 
     let newdate = startDate;
 
-    // for(newdate = startDate; newdate <= endDate; newdate.setDate(newdate.getDate() + 7)){
+    const tkbStart = new Date(newdate);
+    tkbStart.setHours(arr_start_time[tbd].split(':')[0], arr_start_time[tbd].split(':')[1]);
 
-        const tkbStart = new Date(newdate);
-        tkbStart.setHours(arr_start_time[tbd].split(':')[0], arr_start_time[tbd].split(':')[1]);
-        
-        const tkbEnd = new Date(newdate);
-        tkbEnd.setHours(arr_end_time[tkt].split(':')[0], arr_end_time[tkt].split(':')[1]);
+    const tkbEnd = new Date(newdate);
+    tkbEnd.setHours(arr_end_time[tkt].split(':')[0], arr_end_time[tkt].split(':')[1]);
 
-        endDate.setHours(23, 59);
-        // console.log(tkbStart.toString(), tkbEnd.toString());
-        
-        kq += `BEGIN:VEVENT\n`;
-        kq += `SUMMARY:${title}\n`;
-        kq += `LOCATION:${location}\n`;
-        kq += `DESCRIPTION:Mã môn học: ${ma_mon}\\nNhóm tổ: ${nhom_to}\\nGiáo viên: ${gv}\n`;
-        kq += `DTSTART:${tkbStart.toISOString().replace(/[-:]|(.000)/g, '')}\n`;
-        kq += `DTEND:${tkbEnd.toISOString().replace(/[-:]|(.000)/g, '')}\n`;
-        kq += `RRULE:FREQ=WEEKLY;INTERVAL=1;UNTIL=${endDate.toISOString().replace(/[-:]|(.000)/g, '')}\n`;
-        kq += `BEGIN:VALARM\n`;
-        kq += `TRIGGER:-PT30M\n`;
-        kq += `DESCRIPTION:${title}\n`;
-        kq += `ACTION:DISPLAY\n`;
-        kq += `END:VALARM\n`;
-        kq += `END:VEVENT\n`;
-        
-    // }
+    endDate.setHours(23, 59);
+
+    kq += `BEGIN:VEVENT\n`;
+    kq += `SUMMARY:${title}\n`;
+    kq += `LOCATION:${location}\n`;
+    kq += `DESCRIPTION:Mã môn học: ${ma_mon}\\nNhóm tổ: ${nhom_to}\\nGiáo viên: ${gv}\n`;
+    kq += `DTSTART:${tkbStart.toISOString().replace(/[-:]|(.000)/g, '')}\n`;
+    kq += `DTEND:${tkbEnd.toISOString().replace(/[-:]|(.000)/g, '')}\n`;
+    kq += `RRULE:FREQ=WEEKLY;INTERVAL=1;UNTIL=${endDate.toISOString().replace(/[-:]|(.000)/g, '')}\n`;
+    kq += `BEGIN:VALARM\n`;
+    kq += `TRIGGER:-PT30M\n`;
+    kq += `DESCRIPTION:${title}\n`;
+    kq += `ACTION:DISPLAY\n`;
+    kq += `END:VALARM\n`;
+    kq += `END:VEVENT\n`;
+
     return kq;
 }
 
-function xulydata(jsonData){
+function xulydata(jsonData) {
     let events = [];
     jsonData.data.ds_nhom_to.forEach(item => {
         events.push(item);
@@ -115,14 +111,13 @@ function xulydata(jsonData){
     icsContent += `BEGIN:VCALENDAR\n`;
     icsContent += `VERSION:2.0\n`;
     icsContent += `PRODID: test_js\n`;
-    
+
     events.forEach(event => {
         icsContent += EventICS(event);
     });
-    
+
     icsContent += `END:VCALENDAR\n`;
 
-    // console.log(icsContent);
     downloadICS(icsContent);
 }
 
@@ -146,12 +141,14 @@ function downloadICS(content) {
     URL.revokeObjectURL(url);
 
     var newWindow = window.open('https://calendar.google.com/calendar/u/0/r/settings/export', '_blank');
-    // Kiểm tra xem tab đã mở thành công chưa
+    
     if (newWindow) {
-        // Gọi alert trong tab mới
-        newWindow.onload = function() {
-            newWindow.alert("Kiểm tra tài khoản Google của bạn.");
-        };
+        var checkInterval = setInterval(function() {
+            if (newWindow.document.readyState === 'complete') {
+                newWindow.alert("Kiểm tra tài khoản Google của bạn.");
+                clearInterval(checkInterval);
+            }
+        }, 1000);
     } else {
         console.log('Tab mới không thể mở do bị chặn.');
     }
