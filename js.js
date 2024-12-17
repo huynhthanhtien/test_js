@@ -60,7 +60,7 @@ function EventICS(json){
     // const timeStart = json.tu_gio;
     // const timeEnd = json.den_gio;
     const tbd = json.tbd;
-    const tkt = parseInt(json.tdb) + parent(json.so_tiet) - 1;
+    const tkt = parseInt(json.tdb) + parseInt(json.so_tiet) - 1;
     // const sotiet = json.so_tiet;
     const nhom_to = json.nhom_to;
     const date = json.tooltip;
