@@ -103,7 +103,7 @@ function xulydata(jsonData){
     
     icsContent += `END:VCALENDAR\n`;
 
-    // // console.log(icsContent);
+    // console.log(icsContent);
     downloadICS(icsContent);
 }
 
