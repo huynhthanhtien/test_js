@@ -79,7 +79,7 @@ function EventICS(json){
     // for(newdate = startDate; newdate <= endDate; newdate.setDate(newdate.getDate() + 7)){
 
         const tkbStart = new Date(newdate);
-        tkbStart.setHours(arr_start_time[tbd].split(':')[0], arr_start_time[tdb].split(':')[1]);
+        tkbStart.setHours(arr_start_time[tbd].split(':')[0], arr_start_time[tbd].split(':')[1]);
         
         const tkbEnd = new Date(newdate);
         tkbEnd.setHours(arr_end_time[tkt].split(':')[0], arr_end_time[tkt].split(':')[1]);
